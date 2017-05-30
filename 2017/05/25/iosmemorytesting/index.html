@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>iOS Memory 内存测试探索 | Nice Day</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="Day,测试,iOS" />
+  
+
+  <meta name="description" content="序移动端的测试，尤其是专项测试中内存memory相关的测试，提及总是让人心里有些距离感或者说不确定感。好像平静深沉的海面，也许下面早已波澜滚滚，可是我在外面看着、看着，仿佛体验很流畅，功能很健全，嗯，看上去很美！ 这个时候，思考一下app本身对系统资源的占用、内存的管理上，是否会带来一些性能上的问题呢？好像只能不断的深入了解实现，逐步由表及里，在代码层扼杀一切可能引起的内存泄漏等，才能让人稍稍放心">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS Memory 内存测试探索">
+<meta property="og:url" content="http://www.niceday.me/2017/05/25/iosmemorytesting/index.html">
+<meta property="og:site_name" content="Nice Day">
+<meta property="og:description" content="序移动端的测试，尤其是专项测试中内存memory相关的测试，提及总是让人心里有些距离感或者说不确定感。好像平静深沉的海面，也许下面早已波澜滚滚，可是我在外面看着、看着，仿佛体验很流畅，功能很健全，嗯，看上去很美！ 这个时候，思考一下app本身对系统资源的占用、内存的管理上，是否会带来一些性能上的问题呢？好像只能不断的深入了解实现，逐步由表及里，在代码层扼杀一切可能引起的内存泄漏等，才能让人稍稍放心">
+<meta property="og:updated_time" content="2017-05-30T10:44:11.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS Memory 内存测试探索">
+<meta name="twitter:description" content="序移动端的测试，尤其是专项测试中内存memory相关的测试，提及总是让人心里有些距离感或者说不确定感。好像平静深沉的海面，也许下面早已波澜滚滚，可是我在外面看着、看着，仿佛体验很流畅，功能很健全，嗯，看上去很美！ 这个时候，思考一下app本身对系统资源的占用、内存的管理上，是否会带来一些性能上的问题呢？好像只能不断的深入了解实现，逐步由表及里，在代码层扼杀一切可能引起的内存泄漏等，才能让人稍稍放心">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbe6" rel="stylesheet">
+
+
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?8d66d8d43fbc24a5b8c105a25eab8429";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">^_^</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">^_^</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#序"><span class="toc-text">序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存泄漏"><span class="toc-text">内存泄漏</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#循环引用"><span class="toc-text">循环引用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查找内存泄漏"><span class="toc-text">查找内存泄漏</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#instrument-leak"><span class="toc-text">instrument leak</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内存监管"><span class="toc-text">内存监管</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FBRetainCycleDetector"><span class="toc-text">FBRetainCycleDetector</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS内存相关概念"><span class="toc-text">iOS内存相关概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-iosmemorytesting" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">iOS Memory 内存测试探索</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.05.25</span>
+      </span>
+
+ 
+      <span>
+        <i class="icon-feather"></i>
+        <span> 字数 1,407</span>
+      </span>
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/iOS测试/">iOS测试</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h3 id="序"><a href="#序" class="headerlink" title="序"></a>序</h3><p>移动端的测试，尤其是专项测试中内存memory相关的测试，提及总是让人心里有些距离感或者说不确定感。<br>好像平静深沉的海面，也许下面早已波澜滚滚，可是我在外面看着、看着，仿佛体验很流畅，功能很健全，嗯，看上去很美！</p>
+<p>这个时候，思考一下app本身对系统资源的占用、内存的管理上，是否会带来一些性能上的问题呢？<br>好像只能不断的深入了解实现，逐步由表及里，在代码层扼杀一切可能引起的内存泄漏等，才能让人稍稍放心、逐渐消除这种不确定感。</p>
+<hr>
+<h3 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h3><p>内存泄漏，系统分配了内存资源给你使用，比如new一个对象，但是使用完却没有释放free掉，这块内存空间就这么被你占着却不用，别人也不能用，于是就造成内存泄漏了。</p>
+<p>iOS 从非 ARC也就是manual 管理的时代到 ARC 以后，内存大部分都转变由iOS自身来管理，这种忘记释放内存的情形变得很少，当然也存在有，尤其是开发人员，有时会疏忽一些他人写的历史遗留代码片段是MRC 管理的情况。</p>
+<p>至此，还有哪些情况会有可能引起内存泄漏呢？<br>跟一个开发聊天时有问过这个问题，不善言辞的开发回答有点精简,</p>
+<blockquote>
+<p>► 哪些地方容易引起内存泄漏啊？<br> ► 互相retain占有，还有bitmapcontext </p>
+</blockquote>
+<p>正好，在之前工作里有遇到过同样本质的两种情况，</p>
+<ul>
+<li>循环引用，互相强持有，永远释放不了彼此</li>
+<li>core foundation 的一些create方法没有release，类似CGImageRef, BitmapContext这种非 OC 对象，ARC控制不了，只得自己去代码 release 释放内存资源。</li>
+</ul>
+<hr>
+<h4 id="循环引用"><a href="#循环引用" class="headerlink" title="循环引用"></a>循环引用</h4><p>循环引用，两个对象都对对方强持有，经典的例子就是</p>
+<blockquote>
+<p>一个view controller对它的view是强持有的，但是view委托的delegate也就是该view controller属性是weak的，这就是为了避免出现循环引用 （<code>delegate</code>的概念此处不谈 ）</p>
+</blockquote>
+<p><code>strong和weak属性</code>的差别，此处也不谈，由此，细心的你会发现大部分帮助实现一些代理方法的delegate对象是weak的，例如</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">id</span>&lt;DayDataSourceDelegate&gt; __<span class="keyword">weak</span> sortDataSource;</div></pre></td></tr></table></figure>
+<p>当然也有一些delegate 对象例如NSURLSessionDelegate 是 retain 持有的，这是因为session对象一直强持有它的delegate来保证网络请求的任务正常完成，即使当前 VC 销毁，后台依然可以完成例如下载任务。</p>
+<p>除了常规的对象还有一种情形，使用<code>block</code>时，很容易对象的block会对自身，或者持有自身的view循环引用。</p>
+<p>解决方法，就是其中一个对象改成对对方的weak持有。</p>
+<hr>
+<h3 id="查找内存泄漏"><a href="#查找内存泄漏" class="headerlink" title="查找内存泄漏"></a>查找内存泄漏</h3><h4 id="instrument-leak"><a href="#instrument-leak" class="headerlink" title="instrument leak"></a>instrument leak</h4><p>instruments 的leak 工具可以用来查找大部分对象并未释放引起的内存泄漏，raywenderlich上面有很详细的demo教如何使用<a href="https://www.raywenderlich.com/97886/instruments-tutorial-with-swift-getting-started" target="_blank" rel="external">instrument教程</a>，我总结了一下工作时容易忽略的几个地方:</p>
+<ul>
+<li>Debug device</li>
+<li>Profile scheme: debug mode</li>
+<li>Build setting : Generate Debug Symbols= Yes</li>
+<li>Call Tree setting: check the “Invert Call Tree” and “Hide System Libraries” in the right bar options</li>
+</ul>
+<p>然而，对于那种循环引用引起的泄漏，感觉leak工具有些爱莫能助。而且使用leak工具有一些较为麻烦的地方：</p>
+<ul>
+<li>基于源码打开instruments工具</li>
+<li>不断的模拟一些情景的切换，重复操作查找泄漏</li>
+</ul>
+<p>如果是测试游戏的内存泄漏，instruments好像有些鸡肋。</p>
+<h4 id="内存监管"><a href="#内存监管" class="headerlink" title="内存监管"></a>内存监管</h4><p>这个时候想起来了监管内存变化时，当push一个uiviewcontroller时，我们会给他分配一定的内存资源，而pop该uiviewcontroller的时候，它以及持有的 view 和任何 subview 都会dealloc被释放掉。那么可以考虑以下两点：</p>
+<ul>
+<li>在vc disappear即生命周期结束的时候通过dealloc log查看是否有持有的所有对象未被释放(未执行dealloc方法)</li>
+<li>给监管的对象分配一个weak指针指向自己，如果被释放了指针为nil</li>
+</ul>
+<h4 id="FBRetainCycleDetector"><a href="#FBRetainCycleDetector" class="headerlink" title="FBRetainCycleDetector"></a>FBRetainCycleDetector</h4><p>facebook以此类似原理提供了查找循环引用的工具FBRetainCycleDetector来帮助我们查找从VC生命周期开始到结束时候它所包含的所有对象（view，viewcontroller层面）是否内存泄漏，好像facebook提供了一套内存测试相关的工具来测试ios app。<br>这工具说实话还没有使用过，后面如果有机会再来update。</p>
+<hr>
+<h3 id="iOS内存相关概念"><a href="#iOS内存相关概念" class="headerlink" title="iOS内存相关概念"></a>iOS内存相关概念</h3><p>delegate<br>strong/weak/retain<br>block<br>vc 生命周期</p>
+<hr>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>instrument 工具的确很强大，除了leak工具，还可以用</p>
+<ul>
+<li>allocation的heapshot来查看一些场景切换下memory持续攀升、无法release的对象</li>
+<li>time profiler 来查看哪些method实现耗时duration长</li>
+<li>nszombie查看造成野指针的僵尸对象</li>
+</ul>
+<p>具体用法不罗列了，网上的教程好像有点多。</p>
+<p>感觉iOS内存测试相关的东西很深很多，自己接触到的都只是以上一些皮毛，发现的类似bug也都出现在图片、map这种需要渲染context的地方，最近开始有了解也许会出现内存泄漏误报的现象(其实我想问那是神马鬼)。<br>除此，对于游戏这种instrument工具无太大用武之地的测试场景，也无法探究得到更多测试方法。</p>
+<p>综上所述，自己ios内存测试的路还很长啊！<br>最后，端午节快乐！</p>
+
+    
+  </div>
+</article>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2017/05/21/iostestingdesign/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+    
+
+    
+
+	<hr />
+	<div id="hypercomments_widget"></div>
+	<script type="text/javascript">
+	_hcwp = window._hcwp || [];
+
+	_hcwp.push({widget:"Stream", widget_id: '91549'});
+
+	(function() {
+
+	if("HC_LOAD_INIT" in window) return;
+
+	HC_LOAD_INIT = true;
+
+	var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+
+	var hcc = document.createElement("script"); 
+	hcc.type = "text/javascript"; 
+	hcc.async = true;
+	hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/"+'91549' +"/"+lang+"/widget.js";
+
+	var s = document.getElementsByTagName("script")[0];
+	s.parentNode.insertBefore(hcc, s.nextSibling);
+	})();
+
+	</script>
+
+	<a href="http://hypercomments.com" class="hc-link" title="comments widget">Powered by HyperComments</a>
+
+
+	
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
