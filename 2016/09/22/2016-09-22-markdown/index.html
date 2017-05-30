@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于Markdown 的一切 | Nice Day</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="markdown," />
+  
+
+  <meta name="description" content="序之所以想分享 markdown 语言，主要是我们组好像使用这个来速写笔记、或者构建html的人还不是很多。 如果有一门通用、语法简单、容易阅读的标记语言，让你只需要关注在文字内容本身，不考虑样式排版，然后他还能闪电般的帮你生成格式良好的html网页，不必苦恼于无法理解源码，为什么不尝试体验一下呢？ 浏览网页的时候稍稍注意一下，一些个人博客，尤其是UX的个人作品集或者一些技术博客，有很大一部分都是">
+<meta name="keywords" content="markdown">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于Markdown 的一切">
+<meta property="og:url" content="http://www.niceday.me/2016/09/22/2016-09-22-markdown/index.html">
+<meta property="og:site_name" content="Nice Day">
+<meta property="og:description" content="序之所以想分享 markdown 语言，主要是我们组好像使用这个来速写笔记、或者构建html的人还不是很多。 如果有一门通用、语法简单、容易阅读的标记语言，让你只需要关注在文字内容本身，不考虑样式排版，然后他还能闪电般的帮你生成格式良好的html网页，不必苦恼于无法理解源码，为什么不尝试体验一下呢？ 浏览网页的时候稍稍注意一下，一些个人博客，尤其是UX的个人作品集或者一些技术博客，有很大一部分都是">
+<meta property="og:image" content="http://www.niceday.me/assets/img/workflow.png">
+<meta property="og:updated_time" content="2017-05-30T04:20:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于Markdown 的一切">
+<meta name="twitter:description" content="序之所以想分享 markdown 语言，主要是我们组好像使用这个来速写笔记、或者构建html的人还不是很多。 如果有一门通用、语法简单、容易阅读的标记语言，让你只需要关注在文字内容本身，不考虑样式排版，然后他还能闪电般的帮你生成格式良好的html网页，不必苦恼于无法理解源码，为什么不尝试体验一下呢？ 浏览网页的时候稍稍注意一下，一些个人博客，尤其是UX的个人作品集或者一些技术博客，有很大一部分都是">
+<meta name="twitter:image" content="http://www.niceday.me/assets/img/workflow.png">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbe6" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?8d66d8d43fbc24a5b8c105a25eab8429";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">^_^</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">^_^</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#序"><span class="toc-text">序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用处"><span class="toc-text">用处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优点"><span class="toc-text">优点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工具"><span class="toc-text">工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#在线提供商"><span class="toc-text">在线提供商</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IDE／app"><span class="toc-text">IDE／app</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#博客工具"><span class="toc-text">博客工具</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始使用"><span class="toc-text">开始使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法"><span class="toc-text">语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#区块元素"><span class="toc-text">区块元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#元素"><span class="toc-text">元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#高级"><span class="toc-text">高级</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#尾"><span class="toc-text">尾</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-2016-09-22-markdown" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">关于Markdown 的一切</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2016.09.22</span>
+      </span>
+
+ 
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/效率/">效率</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p>之所以想分享 markdown 语言，主要是我们组好像使用这个来<strong>速写笔记</strong>、或者<strong>构建html</strong>的人还不是很多。</p>
+<p>如果有一门通用、语法简单、容易阅读的标记语言，让你只需要关注在文字内容本身，不考虑样式排版，然后他还能闪电般的帮你生成格式良好的html网页，不必苦恼于无法理解源码，为什么不尝试体验一下呢？</p>
+<p>浏览网页的时候稍稍注意一下，一些个人<a href="http://www.manikrathee.com" target="_blank" rel="external">博客</a>，尤其是UX的个人作品集或者一些<a href="http://requiremind.com/memoization-speed-up-your-javascript-performance/" target="_blank" rel="external">技术博客</a>，有很大一部分都是使用md格式的源文件来存储日志本身的（不要问我怎么知道的，浏览器也不会告诉你，我就是知道的啦～），这些看起来或小清新、或极客、或高逼格的日志背后，无外乎就是下面一加一的组合</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">md格式文本 </div><div class="line">漂亮的网页模版</div></pre></td></tr></table></figure>
+<p>等到你真正开始使用md的时候，相信你再看到这种页面也会觉得不过如此嘛<br>当然，如果的如果，你解锁了更多<code>高级</code>玩法以后，就会发现里面大有乾坤，更多乐趣（此条适用于像我一样，肤浅的喜欢这种漂亮前端的人～）</p>
+<p>个人感觉，markdown 挺适合于喜欢写讲究排版优美，结构清晰的文字，然而又不愿意费时精细修饰的人，对，说的就是我这样的懒人！</p>
+<h2 id="用处"><a href="#用处" class="headerlink" title="用处"></a>用处</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">ID</th>
+<th style="text-align:left">where to use</th>
+<th>example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:left">build web page</td>
+<td>home portal</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:left">write quick note</td>
+<td>review feature like <a href="https://www.zybuluo.com/watermask/note/487367" target="_blank" rel="external">APNS</a></td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:left">draw graph</td>
+<td>workflow chart</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:left">write blog</td>
+<td>tech <a href="http://www.jianshu.com/p/2521c610fac3" target="_blank" rel="external">blog</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>lightweight markup language</li>
+<li>simple format</li>
+<li>text to html</li>
+<li>easy to read and preview</li>
+<li>version control</li>
+<li>efficiency</li>
+<li>experience</li>
+</ul>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><h3 id="在线提供商"><a href="#在线提供商" class="headerlink" title="在线提供商"></a>在线提供商</h3><blockquote>
+<p> ▷ 作业部落<br>  ▷ 马克飞象<br>  ▷ 简书<br>  ▷ day one app</p>
+</blockquote>
+<h3 id="IDE／app"><a href="#IDE／app" class="headerlink" title="IDE／app"></a>IDE／app</h3><blockquote>
+<p> ► macdown<br> ► mou<br> ► sublime<br> ► vim</p>
+</blockquote>
+<h3 id="博客工具"><a href="#博客工具" class="headerlink" title="博客工具"></a>博客工具</h3><blockquote>
+<p> ❍ wordpress<br> ❍ jekyll<br> ❍ hexo</p>
+</blockquote>
+<h2 id="开始使用"><a href="#开始使用" class="headerlink" title="开始使用"></a>开始使用</h2><p>听起来好像语法很简单，也很容易上手的样子，但是怎么高效的应用呢，哪里入手开始写markdown呢？<br>大概就跟把大象放进冰箱里一样，分三步，打开选择的编辑器，写文档，输出格式，然后结束</p>
+<p><a href="https://www.zybuluo.com/watermask/note/508885" target="_blank" rel="external"><img src="/assets/img/workflow.png" alt="workflow"></a></p>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><h3 id="区块元素"><a href="#区块元素" class="headerlink" title="区块元素"></a>区块元素</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">标题</div><div class="line">引用</div><div class="line">列表</div><div class="line">代码块</div><div class="line">分割线</div><div class="line">表格</div></pre></td></tr></table></figure>
+<h3 id="元素"><a href="#元素" class="headerlink" title="元素"></a>元素</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">强调</div><div class="line">链接</div><div class="line">高亮</div><div class="line">图片</div></pre></td></tr></table></figure>
+<h3 id="高级"><a href="#高级" class="headerlink" title="高级"></a>高级</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">流程图</div><div class="line">列表</div><div class="line">emoji</div><div class="line">公式</div><div class="line">---</div><div class="line">混合html</div><div class="line">嵌套使用混搭样式</div><div class="line">插入css样式</div></pre></td></tr></table></figure>
+<h2 id="尾"><a href="#尾" class="headerlink" title="尾"></a>尾</h2><p>时隔快一年再来看这篇markdown的分享，发现我已经基本离不开md格式的快速笔记了。<br>给自己工作和学习上的好伴侣，quiver app 点个赞！</p>
+
+    
+  </div>
+</article>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2016/08/14/2016-08-13-Met-Star-when-hiking/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/2017/05/21/客户端测试用例的设计和方法论/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+    
+
+    
+
+	<hr />
+	<div id="hypercomments_widget"></div>
+	<script type="text/javascript">
+	_hcwp = window._hcwp || [];
+
+	_hcwp.push({widget:"Stream", widget_id: '91549'});
+
+	(function() {
+
+	if("HC_LOAD_INIT" in window) return;
+
+	HC_LOAD_INIT = true;
+
+	var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+
+	var hcc = document.createElement("script"); 
+	hcc.type = "text/javascript"; 
+	hcc.async = true;
+	hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/"+'91549' +"/"+lang+"/widget.js";
+
+	var s = document.getElementsByTagName("script")[0];
+	s.parentNode.insertBefore(hcc, s.nextSibling);
+	})();
+
+	</script>
+
+	<a href="http://hypercomments.com" class="hc-link" title="comments widget">Powered by HyperComments</a>
+
+
+	
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
