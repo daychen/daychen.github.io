@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用Web Inspector调试mobile safari的js bug | Nice Day</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="js," />
+  
+
+  <meta name="description" content="遇到一个移动浏览器js bug昨天在使用iPhone浏览器safari查看网页时发现了一个bug  bug：左下角的圆形按钮在某些页面点击没有反应，但在其他页面点击是可以弹出浮窗进行操作的  然后就在想是什么原因引起的，会不会是因为js在某些页面忘记加载或者加载失败？脑洞大开地猜测会不会是事件冒泡、给触发了啥父元素的事件。正好没有remote debug过移动端网页，所以尝试了一下safari浏览">
+<meta name="keywords" content="js">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Web Inspector调试mobile safari的js bug">
+<meta property="og:url" content="http://www.niceday.me/2017/05/31/webinspector/index.html">
+<meta property="og:site_name" content="Nice Day">
+<meta property="og:description" content="遇到一个移动浏览器js bug昨天在使用iPhone浏览器safari查看网页时发现了一个bug  bug：左下角的圆形按钮在某些页面点击没有反应，但在其他页面点击是可以弹出浮窗进行操作的  然后就在想是什么原因引起的，会不会是因为js在某些页面忘记加载或者加载失败？脑洞大开地猜测会不会是事件冒泡、给触发了啥父元素的事件。正好没有remote debug过移动端网页，所以尝试了一下safari浏览">
+<meta property="og:image" content="http://www.niceday.me/assets/img/976141317D7E3450EE9C56CD0BB92C7A.png">
+<meta property="og:image" content="http://www.niceday.me/assets/img/8B09FBA387C098715BF354132E1FFBC6.png">
+<meta property="og:updated_time" content="2017-06-01T03:46:03.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Web Inspector调试mobile safari的js bug">
+<meta name="twitter:description" content="遇到一个移动浏览器js bug昨天在使用iPhone浏览器safari查看网页时发现了一个bug  bug：左下角的圆形按钮在某些页面点击没有反应，但在其他页面点击是可以弹出浮窗进行操作的  然后就在想是什么原因引起的，会不会是因为js在某些页面忘记加载或者加载失败？脑洞大开地猜测会不会是事件冒泡、给触发了啥父元素的事件。正好没有remote debug过移动端网页，所以尝试了一下safari浏览">
+<meta name="twitter:image" content="http://www.niceday.me/assets/img/976141317D7E3450EE9C56CD0BB92C7A.png">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbe6" rel="stylesheet">
+
+
+  
+
+  
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?8d66d8d43fbc24a5b8c105a25eab8429";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+  
+
+  
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+</head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">^_^</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">^_^</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#遇到一个移动浏览器js-bug"><span class="toc-text">遇到一个移动浏览器js bug</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web-inspector调试"><span class="toc-text">web inspector调试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#safari中文被转码的根源解决"><span class="toc-text">safari中文被转码的根源解决</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#bug根源"><span class="toc-text">bug根源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bug解决"><span class="toc-text">bug解决</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-webinspector" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">使用Web Inspector调试mobile safari的js bug</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2017.05.31</span>
+      </span>
+
+ 
+      <span>
+        <i class="icon-feather"></i>
+        <span> 字数 576</span>
+      </span>
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/mobile/">mobile</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h3 id="遇到一个移动浏览器js-bug"><a href="#遇到一个移动浏览器js-bug" class="headerlink" title="遇到一个移动浏览器js bug"></a>遇到一个移动浏览器js bug</h3><p>昨天在使用iPhone浏览器safari查看<a href="http://www.niceday.me/2017/05/25/iosmemorytesting/">网页</a>时发现了一个bug</p>
+<blockquote>
+<p>bug：左下角的圆形按钮在某些页面点击没有反应，但在其他<a href="http://www.niceday.me/categories/iOS%E6%B5%8B%E8%AF%95/">页面</a>点击是可以弹出浮窗进行操作的</p>
+</blockquote>
+<p>然后就在想是什么原因引起的，会不会是因为js在某些页面忘记加载或者加载失败？脑洞大开地猜测会不会是事件冒泡、给触发了啥父元素的事件。<br>正好没有remote debug过移动端网页，所以尝试了一下safari浏览器自带的web inspector，来远程调试这个只有iphone上才能捕捉到的bug。</p>
+<hr>
+<h3 id="web-inspector调试"><a href="#web-inspector调试" class="headerlink" title="web inspector调试"></a>web inspector调试</h3><p>准备工作有两步：</p>
+<ul>
+<li>iphone 连接mac</li>
+<li>mac打开safari浏览器，在preference的advanced选项中支持Show Develop menu in menu bar，这样就可以在safari菜单栏看到develop选项，从而进入识别连接的iphone设备、控制管理移动端Safari操作</li>
+</ul>
+<p>正式开始远程调试：</p>
+<ul>
+<li>iphone打开safari浏览器点击进入你想要访问的页面</li>
+<li>mac端从safari的左上角develop菜单里可以看到你连接的iPhone设备，点击进去可以看到移动端正在访问的页面</li>
+</ul>
+<p>正如下图所示，跟在电脑浏览器访问调试网页没有差别，很方便的可以查看js、设置断点、跟踪元素。</p>
+<p><img src="/assets/img/976141317D7E3450EE9C56CD0BB92C7A.png" alt="Screen Shot 2017-05-31 at 9.44.57 PM.png"></p>
+<hr>
+<h3 id="safari中文被转码的根源解决"><a href="#safari中文被转码的根源解决" class="headerlink" title="safari中文被转码的根源解决"></a>safari中文被转码的根源解决</h3><p>仔细查看这个问题，首先发现问题是js加载报错，debug跟踪下去，发现问题出在下面这段代码处</p>
+<p><img src="/assets/img/8B09FBA387C098715BF354132E1FFBC6.png" alt="Screen Shot 2017-05-31 at 9.49.00 PM.png"></p>
+<h4 id="bug根源"><a href="#bug根源" class="headerlink" title="bug根源"></a>bug根源</h4><p>在获取某个页面标签时，通过hash可以获得href=“#…”链接参数里#及后面的部分，如下拿到“#序”这个字符串</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">"toc-link"</span> <span class="attr">href</span>=<span class="string">"#序"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"toc-text"</span>&gt;</span>序<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>但是在浏览器中，safari会将中文转码成utf-8格式，i的值便从“序”变成了“%E5%BA%8F”，从而后面获取这个转码过的元素为空，继而引起js报错。<br>好像只有safari浏览器会有这个问题，chrome并没有帮我们转码。</p>
+<h4 id="bug解决"><a href="#bug解决" class="headerlink" title="bug解决"></a>bug解决</h4><blockquote>
+<p>解决：判断是否有被转码，从而解码成原汉字</p>
+</blockquote>
+<p>现在这个网页的bug已经fix，可以愉快的继续玩耍了，小控件点起来！</p>
+
+    
+  </div>
+</article>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2017/05/25/iosmemorytesting/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+
+
+
+    
+
+    
+
+	<hr />
+	<div id="hypercomments_widget"></div>
+	<script type="text/javascript">
+	_hcwp = window._hcwp || [];
+
+	_hcwp.push({widget:"Stream", widget_id: '91549'});
+
+	(function() {
+
+	if("HC_LOAD_INIT" in window) return;
+
+	HC_LOAD_INIT = true;
+
+	var lang = (navigator.language || navigator.systemLanguage || navigator.userLanguage || "en").substr(0, 2).toLowerCase();
+
+	var hcc = document.createElement("script"); 
+	hcc.type = "text/javascript"; 
+	hcc.async = true;
+	hcc.src = ("https:" == document.location.protocol ? "https" : "http")+"://w.hypercomments.com/widget/hc/"+'91549' +"/"+lang+"/widget.js";
+
+	var s = document.getElementsByTagName("script")[0];
+	s.parentNode.insertBefore(hcc, s.nextSibling);
+	})();
+
+	</script>
+
+	<a href="http://hypercomments.com" class="hc-link" title="comments widget">Powered by HyperComments</a>
+
+
+	
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
