@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://www.niceday.me/assets/img/A1737E90DFDF090BC1B6CD6967FCA896.jpg">
 <meta property="og:image" content="http://www.niceday.me/assets/img/26644A07AD6C8168D9976EBDF66D6D63.jpg">
 <meta property="og:image" content="http://www.niceday.me/assets/img/E973E8FABA872A05719D0D34D735A91D.jpg">
-<meta property="og:updated_time" content="2017-06-02T15:56:12.000Z">
+<meta property="og:updated_time" content="2017-06-02T15:58:15.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS 证书详解">
 <meta name="twitter:description" content="序老是有同事一直问关于ios证书的问题，正好之前面试时提起过idp，所以打算来详细的理一理关于iOS证书的概念还有一些跳过的坑，以及一些常见的问题。   如何通过xcode 项目工程build app到device 呢？ 除了app store安装app，以及用开发证书来签名app、安装到开发的设备以外（添加到developer账号，也就是经常说的可以用来debug的设备），还能怎么安装app？">
@@ -82,6 +82,9 @@
   
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
   
+
+   <link rel="stylesheet" href="/css/daycss/set1.css">
+
 </head>
 
 <body>
@@ -143,7 +146,7 @@
 
   <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#序"><span class="toc-text">序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#app-id"><span class="toc-text">app id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ios证书和-provison-profile用处"><span class="toc-text">ios证书和 provison profile用处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#证书certificate"><span class="toc-text">证书certificate</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生成证书"><span class="toc-text">生成证书</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#provision-profile"><span class="toc-text">provision profile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二者的使用"><span class="toc-text">二者的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-text">概念</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#序"><span class="toc-text">序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#app-id"><span class="toc-text">app id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ios证书和-provison-profile用处"><span class="toc-text">ios证书和 provison profile用处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#证书certificate"><span class="toc-text">证书certificate</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生成证书"><span class="toc-text">生成证书</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#provision-profile"><span class="toc-text">provision profile</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二者的使用"><span class="toc-text">二者的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#概念"><span class="toc-text">概念</span></a></li></ol>
   </div>
 
 
@@ -261,7 +264,7 @@
 <p>题外话，貌似我司的证书和描述文件格外强大，没有授权的设备也能下载安装我们的app，后来才知道公司in house有一种新的描述文件类型，可以授权任何device下载我司的产品，太高级了！</p>
 <p><img src="/assets/img/E973E8FABA872A05719D0D34D735A91D.jpg" alt="Jietu20170602-200146.jpg"></p>
 <p>而作为独立开发者的个人来讲，你的app除了提交app store以外，要想安装app，必须得授权device，将设备uuid给添加到描述文件provision profile里去。</p>
-<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><ul>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
 <li>keychain</li>
 <li>证书公钥／私钥 </li>
 </ul>
