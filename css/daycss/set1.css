@@ -12,7 +12,7 @@
 .grid {
 	position: relative;
 	margin: 0 auto;
-	padding: 1em 0 4em;
+	padding: 1em 0 1em;
 	max-width: 1000px;
 	list-style: none;
 	text-align: center;
@@ -28,15 +28,15 @@
 	max-width: 480px;
 	max-height: 360px;
 	width: 48%;
-	/*background: #3085a3;*/
-	text-align: center;
+/*	background: #3085a3;
+*/	text-align: center;
 	cursor: pointer;
 }
 
 .grid figure img {
 	position: relative;
-	display: block;
-	min-height: 100%;
+/*	display: block;
+*/	min-height: 100%;
 	max-width: 100%;
 	opacity: 0.8;
 }
@@ -88,9 +88,13 @@
 	margin: 0;
 }
 
+.grid figure b{
+	opacity: 0.9;
+}
 .grid figure p {
 	letter-spacing: 1px;
 	font-size: 68.5%;
+	line-height: 170%;
 }
 
 /* Individual effects */
@@ -125,8 +129,8 @@ figure.effect-lily figcaption > div {
 
 figure.effect-lily h2,
 figure.effect-lily p {
-	-webkit-transform: translate3d(0,40px,0);
-	transform: translate3d(0,40px,0);
+	-webkit-transform: translate3d(0,35px,0);
+	transform: translate3d(0,35px,0);
 }
 
 figure.effect-lily h2 {
@@ -230,11 +234,11 @@ figure.effect-sadie:hover p {
 
 
 @media screen and (max-width: 50em) {
-	/*.content {
-		padding: 0 10px;
-		text-align: center;
+	.content {
+	/*	padding: 0 10px;*/
+	/*	text-align: center;*/
 	}
-*/
+
 	
 	.grid figure {
 		display: inline-block;
